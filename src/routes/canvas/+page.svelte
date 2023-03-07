@@ -6,15 +6,20 @@
   import createPersonSVG from '$lib/images/Create Person.svg'
   import createTeamSVG from '$lib/images/Create Team.svg'
   import {addNewTeamGroup, getAngleXYCordinates, addNewPerson} from '$lib/functions/newTeamGroup.js'
-
   import { currentUser, pb } from '$lib/pocketbase';
+  // import {setContext} from "svelte"
+  import {orgUsersStore} from '$lib/functions/orgUsersStore.js';
 
   export let data;
   // console.log(data)
   const organization = data.organization
   const groups = data.organization.expand.groups
   const teams = data.organization.expand['teams(organization)']
+  const users = data.organization.expand['users(organization)']
+  // console.log(users)
 
+  orgUsersStore.set(users)
+  // console.log(users)
 
   let stage
   let layer
