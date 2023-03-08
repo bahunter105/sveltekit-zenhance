@@ -13,7 +13,7 @@
   orgUsersStore.subscribe((data) => {
     users = data
   })
-  console.log(users)
+  // console.log(users)
 
   let numberOfRolesString
   let numberOfRoles
@@ -21,6 +21,9 @@
     // console.log(typeof parseInt(numberOfRoles))
     numberOfRoles = parseInt(numberOfRolesString)
   }
+
+  let teamName
+  let teamGoal
 
   let group = 1
 
@@ -43,7 +46,7 @@
       <form class="flex flex-col items-center" method="post" action="/canvas">
         {#if group ==  1}
           <h3 class="text-lg font-bold">Create Your Team!</h3>
-          <input class="my-1 input input-xs input-bordered w-full" name="name" type="text" placeholder="Team Name"/>
+          <input bind:value={teamName} class="my-1 input input-xs input-bordered w-full" name="name" type="text" placeholder="Team Name"/>
           <select bind:value={numberOfRolesString} on:change={updateRoles} class="my-1 input input-sm input-bordered w-full" name="number">
             <option disabled selected>Number of People</option>
             <option>1</option>
@@ -60,11 +63,13 @@
             <option>Group A</option>
             <option>Group B</option>
           </select> -->
-          <input class="my-1 input input-sm input-bordered w-full" name="goal" type="text" placeholder="Goal (You can edit this later)"/>
+          <input bind:value={teamGoal} class="my-1 input input-sm input-bordered w-full" name="goal" type="text" placeholder="Goal (You can edit this later)"/>
           <button on:click={nextFormPart} class="my-2 btn btn-accent">Next</button>
         {/if}
         {#if group == 2}
             <h3 class="text-lg font-bold">Select Roles</h3>
+            <input name="name" type="hidden" value={teamName}>
+            <input name="goal" type="hidden" value={teamGoal}>
             {#each Array(numberOfRoles) as _, i}
               <div class="flex border rounded my-1">
                 <select class="my-1 input select-xs select-ghost w-full" name="role{i}">
@@ -78,7 +83,7 @@
                   <option>SME</option>
                   <option>Team Lead</option>
                 </select>
-                <select class="my-1 input select-xs select-ghost w-full" name="role{i}">
+                <select class="my-1 input select-xs select-ghost w-full" name="user{i}">
                     <option disabled selected>Name (Can Select Later)</option>
                   {#each users as user}
                     <option value={user.id}>{user.name}</option>

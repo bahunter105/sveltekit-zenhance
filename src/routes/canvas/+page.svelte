@@ -200,13 +200,13 @@
         if (index <= 7) {
           let coordinates = getAngleXYCordinates(plusCircleX, plusCircleY, 375, index)
           let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
-          let roles = teamData.expand.roles
+          let roles = teamData.expand['roles(team)']
           if (roles != undefined) {
-            roles.forEach((personData, personIndex) => {
+            roles.forEach((roleData, roleIndex) => {
               // set max number of team members to 8
               if (index <= 7) {
-                let personCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110, personIndex, true)
-                addNewPerson(teamGroup, personCoordinates, personData)
+                let roleCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110, roleIndex, true)
+                addNewPerson(teamGroup, roleCoordinates, roleData)
               }
             })
           }
