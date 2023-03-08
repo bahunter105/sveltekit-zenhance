@@ -231,9 +231,9 @@ function addNewPerson(group, coordinates, data = {'name': 'Person Name', 'role':
 
       personGroup.add(newPerson)
 
-      if(data.name){
+      if(data.expand['user'] != undefined){
         let textName = new Konva.Text({
-            text: data.name,
+            text: data.expand['user'].name,
             x: coordinates.x + 20,
             y: coordinates.y - 15,
             fontSize: 10,

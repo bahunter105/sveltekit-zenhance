@@ -6,15 +6,20 @@
   import createPersonSVG from '$lib/images/Create Person.svg'
   import createTeamSVG from '$lib/images/Create Team.svg'
   import {addNewTeamGroup, getAngleXYCordinates, addNewPerson} from '$lib/functions/newTeamGroup.js'
-
   import { currentUser, pb } from '$lib/pocketbase';
+  // import {setContext} from "svelte"
+  import {orgUsersStore} from '$lib/functions/orgUsersStore.js';
 
   export let data;
   // console.log(data)
   const organization = data.organization
   const groups = data.organization.expand.groups
   const teams = data.organization.expand['teams(organization)']
+  const users = data.organization.expand['users(organization)']
+  // console.log(users)
 
+  orgUsersStore.set(users)
+  // console.log(users)
 
   let stage
   let layer
@@ -195,13 +200,13 @@
         if (index <= 7) {
           let coordinates = getAngleXYCordinates(plusCircleX, plusCircleY, 375, index)
           let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
-          let roles = teamData.expand.roles
+          let roles = teamData.expand['roles(team)']
           if (roles != undefined) {
-            roles.forEach((personData, personIndex) => {
+            roles.forEach((roleData, roleIndex) => {
               // set max number of team members to 8
               if (index <= 7) {
-                let personCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110, personIndex, true)
-                addNewPerson(teamGroup, personCoordinates, personData)
+                let roleCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110, roleIndex, true)
+                addNewPerson(teamGroup, roleCoordinates, roleData)
               }
             })
           }

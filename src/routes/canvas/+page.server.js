@@ -17,17 +17,31 @@ export const actions = {
       "organization": user.organization
     };
 
-    // const record =
-    await pb.collection('teams').create(data);
+    const teamRecord = await pb.collection('teams').create(data);
 
-    // const organization = await locals.pb.collection('organizations').getOne(user.organization)
-    // let teams = organization.teams
-    // teams.push(record.id)
-    // // example update data
-    // const updateData = {
-    //     "teams": teams
-    // };
-    // await pb.collection('organizations').update(user.organization, updateData);
+    // console.log(teamRecord)
+    // console.log(teamRecord.id)
+
+    let roleData
+
+    for (let step = 0; step < 8; step++) {
+      if (formData.get(`role${step}`) != undefined) {
+        if (formData.get(`user${step}`) != undefined) {
+          roleData = {
+            "role": formData.get(`role${step}`),
+            "team": teamRecord.id,
+            "user": formData.get(`user${step}`)
+          };
+        } else {
+          roleData = {
+            "role": formData.get(`role${step}`),
+            "team": teamRecord.id
+          };
+        }
+        await pb.collection('roles').create(roleData);
+      }
+    }
+
     return { success: true };
   }
 };
@@ -39,7 +53,7 @@ export const load = ({ locals }) => {
 		try {
 			const user = locals.user
       const organization = serializeNonPOJOs(await locals.pb.collection('organizations').getOne(user.organization,{
-        expand: 'creator, groups(organization), teams(organization), teams(organization).roles, users(organization)'
+        expand: 'creator, groups(organization), teams(organization), teams(organization).roles(team), teams(organization).roles(team).user, users(organization)'
         // expand: 'users(organization)'
       }));
 			return organization;
