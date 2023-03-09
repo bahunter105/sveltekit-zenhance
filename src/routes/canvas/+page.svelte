@@ -218,7 +218,7 @@
 
     // Zoooooooming
     // by scrolling
-    var scaleBy = 1.01;
+    var scaleBy = 1.05;
     stage.on('wheel', (e) => {
       // stop default scrolling
       e.evt.preventDefault();
