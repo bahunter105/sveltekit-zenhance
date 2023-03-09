@@ -1,13 +1,14 @@
 {
 	"name": "sveltekit-daisy",
 	"version": "0.0.1",
-	"scripts": {
+	"scripts": {,
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+    "vercel-build": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/ && vite build"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^4.5.10",
@@ -26,6 +27,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@napi-rs/canvas": "^0.1.37",
 		"daisyui": "^2.51.3",
 		"konva": "^8.4.2",
 		"pocketbase": "^0.12.0"
