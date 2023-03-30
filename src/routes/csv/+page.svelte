@@ -5,10 +5,11 @@
   import plusCircleSVG from '$lib/images/plus-circle.svg'
   import createPersonSVG from '$lib/images/Create Person.svg'
   import createTeamSVG from '$lib/images/Create Team.svg'
-  import {addNewTeamGroup, getAngleXYCordinates, addNewPerson} from '$lib/functions/newTeamGroup.js'
+  import {addNewTeamGroup, getAngleXYCordinates, addNewPerson} from '$lib/functions/newTeamGroupCsv.js'
   import {orgUsersStore} from '$lib/functions/orgUsersStore.js';
 
-  import csv_file from '$lib/Org.csv'
+  import org_csv from '$lib/Org.csv'
+  import person_csv from '$lib/PersonRole.csv'
 	import { blank_object, children } from 'svelte/internal';
 
   let data = []
@@ -17,19 +18,16 @@
   let regex = /\Level/;;
   let level_counter = 0;
 
-  Object.keys(csv_file[0]).forEach(key => {
+  Object.keys(org_csv[0]).forEach(key => {
     if (key.match(regex)) {
       level_counter++
     }
   });
 
-  // console.log(level_counter);
-
-  // define levels as none, this will be used to update the levels as we work our way through the csv
   let csv_levels = []
   let line_data
 
-  csv_file.forEach(line => {
+  org_csv.forEach(line => {
     line_data = line
     let name_found = false
     for(let i = 1; i <= level_counter; i++){
@@ -44,41 +42,31 @@
         }
       }
     }
-    // console.log(line)
     line_data['Children'] = []
     data.push(line_data)
 
+    line_data['roles'] = {}
+    let regex = /\Role/;
+
+    Object.keys(line_data).forEach(key => {
+      if (key.match(regex)) {
+        if (!line_data[key] == "") {
+          line_data['roles'][`${line_data[key]}`] = 'undefined'
+        }
+      }
+    });
+
   });
-  // console.log(data)
-  // console.log(csv_file[0])
 
-  // console log only group 1 data
-  // data.forEach(item => {
-  //   if(item['Level 1'] == data[0]['Level 1']){
-  //     // console.log(item)
-  //   }
-  // });
+  person_csv.forEach(person => {
+    let team = data.find( team => team['Name'] == person['Team'])
+    team['roles'][person['Role']] = person['Person']
+  });
 
-  // find number of unique values in l1
-
-
-
-  // let unique_values = []
-
-
-  // data.forEach(item => {
-  //   if(!unique_values.includes(item['Level 1'])){
-  //     unique_values.push(item['Level 1'])
-  //   }
-  // })
-  // // console.log(unique_values)
-  // unique_values.forEach(value => {
-  //   // data.forEach()
-  // })
 
   let organization = []
 
-  for(let x = 5; x > 0; x--){
+  for(let x = level_counter; x > 0; x--){
     data.forEach(item =>{
       // console.log(item)
       if (item[`Level ${x}`] != '' && item[`Level ${x+1}`] == '') {
@@ -95,6 +83,8 @@
       }
     })
   }
+
+
   console.log(organization)
 
   let stage
@@ -270,13 +260,22 @@
     layer.add(newTeamOrbitCircle)
 
     // add teams & people via data
-    if (teams != undefined) {
-      teams.forEach((teamData, index) => {
+    if (organization != undefined) {
+      organization.forEach((teamData, index) => {
         // set max number of teams to 8
         if (index <= 7) {
           let coordinates = getAngleXYCordinates(plusCircleX, plusCircleY, 375, index)
           let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
-          let roles = teamData.expand['roles(team)']
+          let roles = []
+          let regex = /\Role/;
+
+          Object.keys(teamData).forEach(key => {
+            if (key.match(regex)) {
+              if (!teamData[key] == "") {
+                roles.push(teamData[key])
+              }
+            }
+          });
           if (roles != undefined) {
             roles.forEach((roleData, roleIndex) => {
               // set max number of team members to 8
@@ -291,6 +290,7 @@
 
       });
     }
+
 
     // Zoooooooming
     // by scrolling
