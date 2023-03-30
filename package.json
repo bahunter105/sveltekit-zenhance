@@ -27,12 +27,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"csv-parse": "^5.3.6",
-		"d3": "^7.8.3",
 		"daisyui": "^2.51.3",
-		"fast-csv": "^4.3.6",
 		"konva": "^8.4.2",
-		"papaparse": "^5.4.1",
 		"pocketbase": "^0.12.0"
 	}
 }
