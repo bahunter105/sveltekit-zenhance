@@ -31,23 +31,68 @@ function getAngleXYCordinates(originX, originY, radius, numberOfSiblings) { //,p
 
   return {x:x, y:y}
 }
+function getTeamAngleXYCordinates(originX, originY, radius, numberOfSiblings, index) { //,person = false //) {
+  // let newRadius = radius + 250*(Math.ceil(((numberOfSiblings+1)-1)/3))
+  console.log(numberOfSiblings)
+  let angle
+  let scale
+  if (numberOfSiblings <3) {
+    angle = -45 + (index*45)
+    scale = 1
+  }else{
+    angle = -45 + (90/(numberOfSiblings-1))*index
+    console.log('more than 3')
+    // scaling algo y = 1.4925e-0.201x
+    scale = 1.4925*Math.exp(-0.201*numberOfSiblings)
+  }
+  // }else{
+  // switch((numberOfSiblings+1) % 3) {
+  //   case 0:
+  //     angle = 85
+  //     break;
+  //   case 1:
+  //     angle = 5
+  //     break;
+  //   case 2:
+  //     angle = 45
+  //     break;
+  // };
+  // }
+
+    // layer.find('#teamGroup').forEach(group => {
+    //   group.parent.scale({ x: .85, y: .85 })
+    // })
+
+  let x = originX + radius * Math.cos(Math.PI * angle / 180)
+  let y = originY + radius * Math.sin(Math.PI * angle / 180)
+
+  return {x:x, y:y, scale:scale}
+}
 
 function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
     // add newTeamGroup
     let newTeamGroup = new Konva.Group({
       draggable: true,
+      // x: coordinates.x,
+      // y: coordinates.y,
+      width: 200,
+      height: 200,
+      // offsetX: 100,
+      // offsetY: 100,
     })
+
     layer.add(newTeamGroup)
     let newTeamX = coordinates.x
     let newTeamY = coordinates.y
+    let scale = coordinates.scale
 
     // add Orbit
     let orbitCircle = new Konva.Circle({
       x: newTeamX,
       y: newTeamY,
-      radius: 110,
-      offsetX: 3,
-      offsetY: 3,
+      radius: 110 * scale,
+      offsetX: 3 * scale,
+      offsetY: 3 * scale,
       fill: 'rgba(0,0,255,0)',
       stroke: 'rgb(255, 168, 0, 0.5)',
       strokeWidth: 1,
@@ -64,10 +109,10 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
         image:newTeamImageObj,
         x: newTeamX,
         y: newTeamY,
-        width: 180,
-        height: 180,
-        offsetX: 90,
-        offsetY: 90,
+        width: 180 * scale,
+        height: 180 * scale,
+        offsetX: 90 * scale,
+        offsetY: 90 * scale,
         id: "teamGroup"
       });
 
@@ -91,6 +136,10 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
       // add cursor styling
       newTeam.on('mouseover', function () {
         document.body.style.cursor = 'pointer';
+        // console.log(this.parent.parent)
+        // this.parent.parent.children.forEach(group => {
+        //   group.parent.scale({ x: .85, y: .85 })
+        // })
       });
       newTeam.on('mouseout', function () {
         document.body.style.cursor = 'default';
@@ -101,10 +150,10 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
     // add newTeamName
     let newTeamName = new Konva.Text({
       text: data['Name'],
-      width: 180,
-      x: coordinates.x - 90,
-      y: coordinates.y + 12,
-      fontSize: 15,
+      width: 180 * scale,
+      x: coordinates.x - 90 * scale,
+      y: coordinates.y + 12 * scale,
+      fontSize: 15 * scale,
       fontStyle: 'bold',
       align: 'center',
       fill: 'white',
@@ -124,15 +173,15 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
       let newTeamInfoButton = new Konva.Image({
         image:newTeamInfoButtonImageObj,
         // x = radius * Math.cos(Math.PI * angle / 180);
-        x: newTeamX + 77 * Math.cos(Math.PI * -35 / 180),
+        x: newTeamX + (77 * Math.cos(Math.PI * -35 / 180)) * scale,
         // y = radius * Math.sin(Math.PI * angle / 180);
-        y: newTeamY + 77 * Math.sin(Math.PI * -35 / 180),
+        y: newTeamY + (77 * Math.sin(Math.PI * -35 / 180))* scale,
         // x: 0,
         // y: 0,
-        width: 56,
-        height: 56,
-        offsetX: 28,
-        offsetY: 28,
+        width: 56 * scale,
+        height: 56 * scale,
+        offsetX: 28 * scale,
+        offsetY: 28 * scale,
         // draggable: true,
       });
 
@@ -168,15 +217,15 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
       let newTeamOrangeAdd = new Konva.Image({
         image:newTeamOrangeAddImageObj,
         // x = radius * Math.cos(Math.PI * angle / 180);
-        x: newTeamX + 66 * Math.cos(Math.PI * 35 / 180),
+        x: newTeamX + (66 * Math.cos(Math.PI * 35 / 180)) * scale,
         // y = radius * Math.sin(Math.PI * angle / 180);
-        y: newTeamY + 66 * Math.sin(Math.PI * 35 / 180),
+        y: newTeamY + (66 * Math.sin(Math.PI * 35 / 180)) * scale,
         // x: 0,
         // y: 0,
-        width: 40,
-        height: 40,
-        offsetX: 20,
-        offsetY: 20,
+        width: 40 * scale,
+        height: 40 * scale,
+        offsetX: 20 * scale,
+        offsetY: 20 * scale,
         // draggable: true,
       });
 
@@ -204,6 +253,8 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
     };
     newTeamOrangeAddImageObj.src = orangeAddSVG
 
+    // newTeamGroup.scale({ x: coordinates.scale, y: coordinates.scale })
+    // console.log(newTeamGroup)
     return newTeamGroup
 }
 
@@ -290,4 +341,4 @@ function addNewPerson(group, coordinates, data = {'name': 'Person Name', 'role':
 }
 
 
-export {addNewTeamGroup, getAngleXYCordinates, addNewPerson}
+export {addNewTeamGroup, getAngleXYCordinates, getTeamAngleXYCordinates, addNewPerson}

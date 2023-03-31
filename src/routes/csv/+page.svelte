@@ -5,7 +5,7 @@
   import plusCircleSVG from '$lib/images/plus-circle.svg'
   import createPersonSVG from '$lib/images/Create Person.svg'
   import createTeamSVG from '$lib/images/Create Team.svg'
-  import {addNewTeamGroup, getAngleXYCordinates, addNewPerson} from '$lib/functions/newTeamGroupCsv.js'
+  import {addNewTeamGroup, getAngleXYCordinates, getTeamAngleXYCordinates, addNewPerson} from '$lib/functions/newTeamGroupCsv.js'
   import {orgUsersStore} from '$lib/functions/orgUsersStore.js';
 
   import org_csv from '$lib/Org.csv'
@@ -63,8 +63,8 @@
     team['roles'][person['Role']] = person['Person']
   });
 
-
-  let organization = []
+  let organization = {}
+  organization['Children'] = []
 
   for(let x = level_counter; x > 0; x--){
     data.forEach(item =>{
@@ -73,7 +73,7 @@
         // console.log('item')
         // console.log(item)
         if (!item[`Level ${x-1}`]) {
-          organization.push(item)
+          organization['Children'].push(item)
         } else {
           let parent = data.find(parentItem => parentItem[`Name`] == item[`Level ${x-1}`])
           // console.log('parent')
@@ -83,7 +83,6 @@
       }
     })
   }
-
 
   console.log(organization)
 
@@ -101,7 +100,6 @@
 
     layer = new Konva.Layer();
     stage.add(layer)
-
     // add transform layer
     // let tr = new Konva.Transformer();
     // layer.add(tr);
@@ -259,12 +257,12 @@
 
     layer.add(newTeamOrbitCircle)
 
-    // add teams & people via data
-    if (organization != undefined) {
-      organization.forEach((teamData, index) => {
+    function renderTeamData(team) {
+      let noOfChildren = team['Children'].length
+      team['Children'].forEach((teamData, index) => {
         // set max number of teams to 8
         if (index <= 7) {
-          let coordinates = getAngleXYCordinates(plusCircleX, plusCircleY, 375, index)
+          let coordinates = getTeamAngleXYCordinates(plusCircleX, plusCircleY, 375, noOfChildren, index)
           let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
           let roles = []
           let regex = /\Role/;
@@ -289,6 +287,39 @@
 
 
       });
+    }
+
+    // add teams & people via data
+    if (organization != undefined) {
+      renderTeamData(organization)
+      // organization.forEach((teamData, index) => {
+      //   // set max number of teams to 8
+      //   if (index <= 7) {
+      //     let coordinates = getTeamAngleXYCordinates(plusCircleX, plusCircleY, 375, index)
+      //     let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
+      //     let roles = []
+      //     let regex = /\Role/;
+
+      //     Object.keys(teamData).forEach(key => {
+      //       if (key.match(regex)) {
+      //         if (!teamData[key] == "") {
+      //           roles.push(teamData[key])
+      //         }
+      //       }
+      //     });
+      //     if (roles != undefined) {
+      //       roles.forEach((roleData, roleIndex) => {
+      //         // set max number of team members to 8
+      //         if (index <= 7) {
+      //           let roleCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110, roleIndex, true)
+      //           addNewPerson(teamGroup, roleCoordinates, roleData)
+      //         }
+      //       })
+      //     }
+      //   }
+
+
+      // });
     }
 
 
