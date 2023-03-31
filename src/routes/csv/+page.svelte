@@ -261,7 +261,7 @@
       let noOfChildren = team['Children'].length
       team['Children'].forEach((teamData, index) => {
         // set max number of teams to 8
-        if (index <= 7) {
+        if (index <= 100) {
           let coordinates = getTeamAngleXYCordinates(plusCircleX, plusCircleY, 375, noOfChildren, index)
           let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
           let roles = []

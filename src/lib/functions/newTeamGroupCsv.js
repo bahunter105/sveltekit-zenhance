@@ -95,8 +95,8 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
       offsetY: 3 * scale,
       fill: 'rgba(0,0,255,0)',
       stroke: 'rgb(255, 168, 0, 0.5)',
-      strokeWidth: 1,
-      dash: [1,1],
+      strokeWidth: 1 * scale,
+      dash: [1* scale,1* scale],
     });
     newTeamGroup.add(orbitCircle);
     orbitCircle.zIndex(0)
