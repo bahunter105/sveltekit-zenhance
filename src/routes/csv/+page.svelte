@@ -239,20 +239,25 @@
 
     layer.add(newTeamOrbitCircle)
 
-    function renderTeamData(team, scale = 1) {
+    function renderTeamData(team, scale = 1, radius = 375, originX = plusCircleX, originY= plusCircleY) {
+      // console.log(team["Children"])
       let noOfChildren = team['Children'].length
       let teamScale
-      team['Children'].forEach((teamData, index) => {
+      let teamOriginX
+      let teamOriginY
+      team['Children'].forEach((childTeamData, index) => {
         // set max number of teams to 100
         if (index <= 100) {
-          let coordinates = getTeamAngleXYCordinates(plusCircleX, plusCircleY, 375, scale, noOfChildren, index)
-          let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
+          let coordinates = getTeamAngleXYCordinates(originX, originY, radius, scale, noOfChildren, index)
+          let teamGroup = addNewTeamGroup(layer, coordinates, childTeamData)
           teamScale = coordinates.scale
-          let roles = Object.keys(teamData.roles)
+          teamOriginX = coordinates.x
+          teamOriginY = coordinates.y
+          let roles = Object.keys(childTeamData.roles)
           if (roles.length != 0) {
             roles.forEach((roleName, roleIndex) => {
               // set max number of team members to 8
-              let roleData = {'name':teamData.roles[`${roleName}`], 'role':roleName}
+              let roleData = {'name':childTeamData.roles[`${roleName}`], 'role':roleName}
               if (roleIndex <= 7) {
                 let roleCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110*coordinates.scale, roleIndex, true)
                 addNewPerson(teamGroup, roleCoordinates, coordinates.scale, roleData)
@@ -260,11 +265,9 @@
             })
           }
         }
-        if(teamData['Children'].length != 0){
-          teamData['Children'].forEach(element => {
-            console.log(element)
-            // renderTeamData(element, teamScale)
-          });
+        if(childTeamData['Children'].length != 0){
+          teamScale *= .5
+          renderTeamData(childTeamData, teamScale, 400*teamScale, teamOriginX, teamOriginY)
         }
       });
     }
