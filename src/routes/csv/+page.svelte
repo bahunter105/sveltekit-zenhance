@@ -84,12 +84,10 @@
     })
   }
 
-  console.log(organization)
+  // console.log(organization)
 
   let stage
   let layer
-  // set an Array of Shapes
-  // let shapesArray = []
 
   onMount(()=> {
     stage = new Konva.Stage({
@@ -100,9 +98,6 @@
 
     layer = new Konva.Layer();
     stage.add(layer)
-    // add transform layer
-    // let tr = new Konva.Transformer();
-    // layer.add(tr);
 
     // call XY coordinates of plusCircle for later use
     let plusCircleX = stage.width() * 0.0825
@@ -115,13 +110,10 @@
         image:plusCirlceImageObj,
         x: plusCircleX,
         y: plusCircleY,
-        // x: stage.width() / 2,
-        // y: stage.height() / 2,
         offsetX:50,
         offsetY: 50,
         width: 100,
         height: 100,
-        // draggable: true,
         id: 'plusCircle'
       });
 
@@ -158,13 +150,10 @@
         // y = radius * Math.sin(Math.PI * angle / 180);
         x: plusCircleX + 100 * Math.cos(Math.PI * 60 / 180),
         y: plusCircleY + 100 * Math.sin(Math.PI * 60 / 180),
-        // x: 0,
-        // y: 0,
         width: 66,
         height: 66,
         offsetX: 33,
         offsetY: 33,
-        // draggable: true,
         visible: false,
         id:"createPerson",
       });
@@ -189,8 +178,6 @@
           createTeam.show()
         }
       })
-
-      // shapesArray.push(imageNode)
     });
 
     // add createTeam
@@ -201,13 +188,10 @@
         // y = radius * Math.sin(Math.PI * angle / 180);
         x: plusCircleX + 100 * Math.cos(Math.PI * 0 / 180),
         y: plusCircleY + 100 * Math.sin(Math.PI * 0 / 180),
-        // x: 0,
-        // y: 0,
         width: 66,
         height: 66,
         offsetX: 33,
         offsetY: 33,
-        // draggable: true,
         visible: false,
         id:"createTeam",
       });
@@ -239,8 +223,6 @@
           createTeam.show()
         }
       })
-
-      // shapesArray.push(imageNode)
     });
 
     let newTeamOrbitCircle = new Konva.Circle({
@@ -257,35 +239,33 @@
 
     layer.add(newTeamOrbitCircle)
 
-    function renderTeamData(team) {
+    function renderTeamData(team, scale = 1) {
       let noOfChildren = team['Children'].length
+      let teamScale
       team['Children'].forEach((teamData, index) => {
-        // set max number of teams to 8
+        // set max number of teams to 100
         if (index <= 100) {
-          let coordinates = getTeamAngleXYCordinates(plusCircleX, plusCircleY, 375, noOfChildren, index)
+          let coordinates = getTeamAngleXYCordinates(plusCircleX, plusCircleY, 375, scale, noOfChildren, index)
           let teamGroup = addNewTeamGroup(layer, coordinates, teamData)
-          let roles = []
-          let regex = /\Role/;
-
-          Object.keys(teamData).forEach(key => {
-            if (key.match(regex)) {
-              if (!teamData[key] == "") {
-                roles.push(teamData[key])
-              }
-            }
-          });
-          if (roles != undefined) {
-            roles.forEach((roleData, roleIndex) => {
+          teamScale = coordinates.scale
+          let roles = Object.keys(teamData.roles)
+          if (roles.length != 0) {
+            roles.forEach((roleName, roleIndex) => {
               // set max number of team members to 8
-              if (index <= 7) {
-                let roleCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110, roleIndex, true)
-                addNewPerson(teamGroup, roleCoordinates, roleData)
+              let roleData = {'name':teamData.roles[`${roleName}`], 'role':roleName}
+              if (roleIndex <= 7) {
+                let roleCoordinates = getAngleXYCordinates(coordinates.x, coordinates.y, 110*coordinates.scale, roleIndex, true)
+                addNewPerson(teamGroup, roleCoordinates, coordinates.scale, roleData)
               }
             })
           }
         }
-
-
+        if(teamData['Children'].length != 0){
+          teamData['Children'].forEach(element => {
+            console.log(element)
+            // renderTeamData(element, teamScale)
+          });
+        }
       });
     }
 

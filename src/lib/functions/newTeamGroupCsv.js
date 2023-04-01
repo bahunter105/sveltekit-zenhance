@@ -8,9 +8,7 @@ function getAngleXYCordinates(originX, originY, radius, numberOfSiblings) { //,p
   // let newRadius = radius + 250*(Math.ceil(((numberOfSiblings+1)-1)/3))
 
   let angle
-  // if(person===true){
-    // angle = -45 + (numberOfSiblings*25)
-    angle = -45 + (numberOfSiblings*45)
+  angle = -45 + (numberOfSiblings*45)
   // }else{
   // switch((numberOfSiblings+1) % 3) {
   //   case 0:
@@ -31,19 +29,17 @@ function getAngleXYCordinates(originX, originY, radius, numberOfSiblings) { //,p
 
   return {x:x, y:y}
 }
-function getTeamAngleXYCordinates(originX, originY, radius, numberOfSiblings, index) { //,person = false //) {
+
+// add scale as an imput to allow for children to be smaller.
+function getTeamAngleXYCordinates(originX, originY, radius, scale, numberOfSiblings, index) { //,person = false //) {
   // let newRadius = radius + 250*(Math.ceil(((numberOfSiblings+1)-1)/3))
-  console.log(numberOfSiblings)
   let angle
-  let scale
   if (numberOfSiblings <3) {
     angle = -45 + (index*45)
-    scale = 1
   }else{
     angle = -45 + (90/(numberOfSiblings-1))*index
-    console.log('more than 3')
     // scaling algo y = 1.4925e-0.201x
-    scale = 1.4925*Math.exp(-0.201*numberOfSiblings)
+    scale *= 1.4925*Math.exp(-0.201*numberOfSiblings)
   }
   // }else{
   // switch((numberOfSiblings+1) % 3) {
@@ -258,7 +254,7 @@ function addNewTeamGroup(layer, coordinates, data = {'name': 'Name'}) {
     return newTeamGroup
 }
 
-function addNewPerson(group, coordinates, data = {'name': 'Person Name', 'role': 'role'}) {
+function addNewPerson(group, coordinates, scale, data = {'name': 'Person Name', 'role': 'role'}) {
     // add newPersonGroup
     let personGroup = new Konva.Group({
       draggable: true,
@@ -272,22 +268,22 @@ function addNewPerson(group, coordinates, data = {'name': 'Person Name', 'role':
         image:newPersonImageObj,
         x: coordinates.x,
         y: coordinates.y,
-        width: 60,
-        height: 60,
-        offsetX: 30,
-        offsetY: 30,
+        width: 60 * scale,
+        height: 60 * scale,
+        offsetX: 30 * scale,
+        offsetY: 30 * scale,
         id: "person",
         draggable: false,
       });
 
       personGroup.add(newPerson)
 
-      if(data['user'] != undefined){
+      if(data.name != 'undefined'){
         let textName = new Konva.Text({
-            text: data.expand['user'].name,
-            x: coordinates.x + 20,
-            y: coordinates.y - 15,
-            fontSize: 10,
+            text: data.name,
+            x: (coordinates.x + 20 * scale),
+            y: (coordinates.y - 15 * scale),
+            fontSize: 10 * scale,
             fontStyle: 'bold italic',
             visible: false,
           });
@@ -295,9 +291,9 @@ function addNewPerson(group, coordinates, data = {'name': 'Person Name', 'role':
       } else{
         let textName = new Konva.Text({
             text: 'Not Assigned',
-            x: coordinates.x + 20,
-            y: coordinates.y - 15,
-            fontSize: 10,
+            x: (coordinates.x + 20 * scale),
+            y: (coordinates.y - 15 * scale),
+            fontSize: 10 * scale,
             fontStyle: 'bold italic',
             visible: false,
           });
@@ -306,9 +302,9 @@ function addNewPerson(group, coordinates, data = {'name': 'Person Name', 'role':
 
         let textRole = new Konva.Text({
           text: data.role,
-          x: coordinates.x + 20,
-          y: coordinates.y - 3,
-          fontSize: 10,
+          x: (coordinates.x + 20 * scale),
+          y: (coordinates.y - 3 * scale),
+          fontSize: 10 * scale,
           fontStyle: 'italic',
           visible: false,
         });
